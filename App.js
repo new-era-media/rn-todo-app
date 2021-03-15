@@ -8,7 +8,6 @@ export default function App() {
   const [todoId, setTodoId] = useState(null);
   const [todos, setTodos] = useState([
     { id: "1", title: "Выучить React Native" },
-    { id: "2", title: "Написать приложение" },
   ]);
 
   const addTodo = (title) => {
@@ -45,7 +44,16 @@ export default function App() {
     setTodoId(null);
   };
 
-  const onOpen = () => {};
+  const onSave = (id, title) => {
+    setTodos((old) =>
+      old.map((todo) => {
+        if (todo.id === id) {
+          todo.title = title;
+        }
+        return todo;
+      })
+    );
+  };
 
   let content = (
     <MainScreen
@@ -58,9 +66,14 @@ export default function App() {
 
   if (todoId) {
     const selectedTodo = todos.find((el) => el.id === todoId);
-    
+
     content = (
-      <TodoScreen goBack={goBack} todo={selectedTodo} removeTodo={removeTodo} />
+      <TodoScreen
+        goBack={goBack}
+        todo={selectedTodo}
+        removeTodo={removeTodo}
+        onSave={onSave}
+      />
     );
   }
 

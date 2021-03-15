@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
 
-export const Todo = ({ todos, removeTodo }) => {
+export const Todo = ({ todos, removeTodo, onOpen }) => {
   return (
     <FlatList
       style={styles.list}
@@ -9,6 +9,7 @@ export const Todo = ({ todos, removeTodo }) => {
       renderItem={({ item }) => (
         <TouchableOpacity
           activeOpacity={0.5}
+          onPress={() => onOpen(item.id)}
           onLongPress={removeTodo.bind(null, item.id)}>
           <Text style={styles.todo}>{item.title}</Text>
         </TouchableOpacity>

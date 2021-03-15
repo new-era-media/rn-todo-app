@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import { Navbar } from "./src/components/Navbar";
-import { AddTodo } from "./src/components/AddTodo";
-import { Todo } from "./src/components/Todo";
+import { MainScreen } from "./src/screens/MainScreen";
+import { TodoScreen } from "./src/screens/TodoScreen";
 
 export default function App() {
-  const [todos, setTodos] = useState([]);
+  const [todoId, setTodoId] = useState(null);
+  const [todos, setTodos] = useState([
+    { id: "1", title: "Выучить React Native" },
+    { id: "2", title: "Написать приложение" },
+  ]);
 
   const addTodo = (title) => {
     setTodos((prevTodos) => [
@@ -16,18 +20,54 @@ export default function App() {
       },
     ]);
   };
-
   const removeTodo = (id) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    Alert.alert(
+      "Удаление эллемента",
+      `Вы уверены что хотите удалить ${id} ?`,
+      [
+        {
+          text: "Отмена",
+          onPress: () => console.log("Отменить"),
+          style: "cancel",
+        },
+        {
+          text: "Удалить",
+          onPress: () => {
+            setTodos((prev) => prev.filter((todo) => todo.id !== id));
+            goBack();
+          },
+        },
+      ],
+      { cancelable: false } //Закрытие при клике по темной области
+    );
   };
+  const goBack = () => {
+    setTodoId(null);
+  };
+
+  const onOpen = () => {};
+
+  let content = (
+    <MainScreen
+      todos={todos}
+      addTodo={addTodo}
+      removeTodo={removeTodo}
+      onOpen={setTodoId}
+    />
+  );
+
+  if (todoId) {
+    const selectedTodo = todos.find((el) => el.id === todoId);
+    
+    content = (
+      <TodoScreen goBack={goBack} todo={selectedTodo} removeTodo={removeTodo} />
+    );
+  }
 
   return (
     <View>
       <Navbar title='Todo app' />
-      <View style={styles.container}>
-        <AddTodo onSubmit={addTodo} />
-        <Todo todos={todos} removeTodo={removeTodo} />
-      </View>
+      <View style={styles.container}>{content}</View>
     </View>
   );
 }
